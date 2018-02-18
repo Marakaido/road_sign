@@ -1,13 +1,6 @@
-function [net,tr] = image_neuro_study(saveFileName, goal, times)
+function [net,tr] = image_neuro_study(saveFileName, goal, times, P, T)
 
-load train_data.mat
-
-net = newff(P, T, [16 16], {'logsig', 'logsig'});
-
-net.trainFcn = 'trainoss';
-net.performFcn = 'mse';
-net.trainParam.epochs=2000;
-net.trainParam.goal=goal;
+net = feedforwardnet([16, 12]);
 
 [best_net, best_tr] = train(net,P,T);
 best_perf = perform(best_net,T,best_net(P));
@@ -22,7 +15,7 @@ for i = 1:times
     end
 end
 
-figure, plotconfusion(T, best_net(P))
+figure, plotregression(T, best_net(P))
 view(best_net)
 
 net = best_net;

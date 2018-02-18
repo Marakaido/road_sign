@@ -1,6 +1,17 @@
-function [R, V] = recognize(file, net)
+function [R, V, P, Category] = recognize(file, net)
 
-t = im2double(imresize(imread(file), [60, 60]));
-x = t(:);
+img = imread(file);
+data = detectFeatures(img, 80, 80);
+data = reshape(data, 1, []);
+data(60) = 0;
+x = data(:);
 V = net(x);
-R = round(V);
+
+R = zeros(62, 1);
+[~, index] = min(abs(V-1));
+R(index) = 1;
+
+P = zeros(62, 2);
+[P(:, 2), P(:, 1)] = sort(V,'descend');
+
+Category = P(1, 1)-1;
